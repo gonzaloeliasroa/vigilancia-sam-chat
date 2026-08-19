@@ -1,24 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { InboxPage } from "@/features/whatsapp-inbox/InboxPage";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Bandeja de WhatsApp — Vigilancia SAM" },
+      {
+        name: "description",
+        content:
+          "Bandeja interna para leer y responder mensajes de WhatsApp de los voluntarios de Vigilancia SAM.",
+      },
+      { property: "og:title", content: "Bandeja de WhatsApp — Vigilancia SAM" },
+      {
+        property: "og:description",
+        content: "Mensajes entrantes y respuestas dentro de la ventana de 24 horas.",
+      },
+    ],
+  }),
+  component: InboxPage,
 });
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}

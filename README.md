@@ -1,29 +1,50 @@
-# Welcome to your Lovable project
+# Vigilancia SAM — Bandeja WhatsApp (app temporal de desarrollo)
 
-This project was built with [Lovable](https://lovable.dev).
+Bandeja de chat interna para leer y responder mensajes de WhatsApp de los
+voluntarios. **No crea un proyecto Supabase nuevo**: se conecta al proyecto
+existente de Vigilancia SAM mediante variables públicas.
 
-## Build with Lovable
+## Variables de entorno
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+```
+VITE_SUPABASE_URL=https://<PROJECT_REF>.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=<publishable o anon key>
+# alternativa aceptada: VITE_SUPABASE_ANON_KEY
 ```
 
-## Built with
+Si faltan, la app muestra un aviso claro y no intenta consultar nada.
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+## Ejecutar
+
+```bash
+bun install
+bun run dev
+```
+
+- `/` → Bandeja de WhatsApp — Vigilancia SAM
+- `/estado-integracion` → checklist del estado de la integración
+
+## Validación paso a paso
+
+1. Ejecutar `supabase-whatsapp-inbox.sql` en el SQL Editor del proyecto existente.
+2. Crear el secreto `WHATSAPP_WEBHOOK_VERIFY_TOKEN`.
+3. Desplegar `whatsapp-webhook` (con `--no-verify-jwt`) y `whatsapp-chat-send`
+   desde `edge-functions/` (ver `INTEGRACION_VIGILANCIA_SAM.md`).
+4. Configurar el webhook en Meta y suscribirse a `messages` (paso manual).
+5. Escribir desde un celular al número de producción y verificar que la
+   conversación aparezca en la bandeja.
+6. Responder texto libre dentro de las 24 h y verificar los tics de estado.
+
+## Alcance actual
+
+- Entrantes: texto, botones, listas y respuestas interactivas. Imágenes, audio,
+  documentos y ubicaciones se registran como “contenido no compatible”.
+- Deduplicación por `wamid`.
+- Salientes: sólo texto libre y sólo con ventana de 24 h abierta.
+- Vinculación con `voluntarios` por teléfono normalizado (solo lectura).
+- Confirmaciones/rechazos: sólo sugerencia visual, no modifican turnos ni
+  `whatsapp_estados`.
+- Realtime + polling cada 30 s como respaldo.
+- Sin cron, sin YCloud, sin plantillas nuevas, sin tocar `whatsapp-send`.
+
+Documentación de importación a la app principal: `INTEGRACION_VIGILANCIA_SAM.md`.
