@@ -58,6 +58,7 @@ export async function enviarRespuesta(conversacionId: string, contenido: string)
 
   // 2. Llamar a la Edge Function para enviar por WhatsApp
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   const functionUrl = `${supabaseUrl}/functions/v1/whatsapp-chat-send`;
 
   try {
@@ -65,6 +66,7 @@ export async function enviarRespuesta(conversacionId: string, contenido: string)
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseKey}`,
       },
       body: JSON.stringify({
         conversacion_id: conversacionId,
