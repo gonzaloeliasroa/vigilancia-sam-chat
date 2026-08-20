@@ -24,8 +24,10 @@ export async function fetchConversaciones(): Promise<Conversacion[]> {
 export async function fetchMensajes(conversacionId: string): Promise<Mensaje[]> {
   const supabase = requireSupabase();
   
+  console.log('[API] Obteniendo mensajes para:', conversacionId);
+  
   const { data, error } = await supabase
-    .from('whatsapp_chat_mensajes')
+    .from('v_todos_mensajes')  // CAMBIADO: usa la vista unificada
     .select('*')
     .eq('conversacion_id', conversacionId)
     .order('created_at', { ascending: true });
@@ -35,6 +37,7 @@ export async function fetchMensajes(conversacionId: string): Promise<Mensaje[]> 
     return [];
   }
   
+  console.log('[API] Mensajes obtenidos:', data?.length || 0);
   return data || [];
 }
 
