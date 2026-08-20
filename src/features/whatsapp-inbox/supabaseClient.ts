@@ -4,7 +4,7 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SU
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.warn('Faltan variables de entorno de Supabase. La bandeja no funcionaráħħ');
+  console.warn('Faltan variables de entorno de Supabase. La bandeja no funcionará');
 }
 
 const client = createClient(supabaseUrl || '', supabaseKey || '');
