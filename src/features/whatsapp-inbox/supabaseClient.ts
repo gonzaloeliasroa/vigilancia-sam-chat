@@ -7,11 +7,13 @@ if (!supabaseUrl || !supabaseKey) {
   console.warn('Faltan variables de entorno de Supabase. La bandeja no funcionaráħħ');
 }
 
-export const supabase = createClient(supabaseUrl || '', supabaseKey || '');
+const client = createClient(supabaseUrl || '', supabaseKey || '');
 
 export function requireSupabase(): SupabaseClient {
   if (!supabaseUrl || !supabaseKey) {
     throw new Error('Faltan variables de entorno de Supabase: VITE_SUPABASE_URL y VITE_SUPABASE_PUBLISHABLE_KEY');
   }
-  return supabase;
+  return client;
 }
+
+export { client as supabase };
