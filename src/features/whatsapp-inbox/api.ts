@@ -1,7 +1,7 @@
 import { requireSupabase } from "./supabaseClient";
 import type { Conversacion, Mensaje } from "./types";
 
-export async function obtenerConversaciones(): Promise<Conversacion[]> {
+export async function fetchConversaciones(): Promise<Conversacion[]> {
   const supabase = requireSupabase();
   
   console.log('[API] Obteniendo conversaciones...');
@@ -21,7 +21,7 @@ export async function obtenerConversaciones(): Promise<Conversacion[]> {
   return data || [];
 }
 
-export async function obtenerMensajes(conversacionId: string): Promise<Mensaje[]> {
+export async function fetchMensajes(conversacionId: string): Promise<Mensaje[]> {
   const supabase = requireSupabase();
   
   const { data, error } = await supabase
@@ -38,7 +38,7 @@ export async function obtenerMensajes(conversacionId: string): Promise<Mensaje[]
   return data || [];
 }
 
-export async function enviarMensaje(conversacionId: string, contenido: string): Promise<boolean> {
+export async function enviarRespuesta(conversacionId: string, contenido: string): Promise<boolean> {
   const supabase = requireSupabase();
   
   const { error } = await supabase
@@ -61,4 +61,23 @@ export async function marcarComoLeida(conversacionId: string): Promise<void> {
     .from('whatsapp_conversaciones')
     .update({ no_leidos: 0 })
     .eq('id', conversacionId);
+}
+
+export async function checkIntegracion(): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const supabase = requireSupabase();
+    
+    const { data, error } = await supabase
+      .from('whatsapp_conversaciones')
+      .select('id')
+      .limit(1);
+    
+    if (error) {
+      return { ok: false, error: error.message };
+    }
+    
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: (e as Error).message };
+  }
 }
