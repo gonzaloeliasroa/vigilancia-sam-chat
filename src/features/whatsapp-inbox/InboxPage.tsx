@@ -253,4 +253,35 @@ export function InboxPage() {
             onBusqueda={setBusqueda}
             filtro={filtro}
             onFiltro={setFiltro}
-            onRefrescar={() =>
+            onRefrescar={() => void cargarConversaciones()}
+            cargando={cargando}
+          />
+        </div>
+
+        <div className={cn("min-h-0", !seleccionada && "hidden md:block")}>
+          {seleccionada && (
+            <div className="border-b border-border bg-card px-3 py-2 md:hidden">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSeleccionada(null)}
+              >
+                <ArrowLeft className="size-4" />
+                Conversaciones
+              </Button>
+            </div>
+          )}
+
+          <ConversationView
+            conversacion={actual}
+            mensajes={mensajes}
+            cargando={cargandoMensajes}
+            enviando={enviando}
+            onMarcarLeida={() => void onMarcarLeida()}
+            onEnviar={onEnviar}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
