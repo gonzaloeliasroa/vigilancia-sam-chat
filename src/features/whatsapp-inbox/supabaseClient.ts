@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -8,3 +8,10 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 export const supabase = createClient(supabaseUrl || '', supabaseKey || '');
+
+export function requireSupabase(): SupabaseClient {
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Faltan variables de entorno de Supabase: VITE_SUPABASE_URL y VITE_SUPABASE_PUBLISHABLE_KEY');
+  }
+  return supabase;
+}
