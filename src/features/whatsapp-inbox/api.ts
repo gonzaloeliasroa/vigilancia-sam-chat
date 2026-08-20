@@ -44,17 +44,47 @@ export async function fetchMensajes(conversacionId: string): Promise<Mensaje[]> 
 export async function enviarRespuesta(conversacionId: string, contenido: string): Promise<boolean> {
   const supabase = requireSupabase();
   
-  const { error } = await supabase
-    .from('whatsapp_chat_mensajes')
-    .insert({
-      conversacion_id: conversacionId,
-      direccion: 'saliente',
-      tipo: 'texto',
-      contenido,
-      estado: 'pendiente',
+  // 1. Obtener el teléfono de la conversación
+  const { data: convData } = await supabase
+    .from('whatsapp_conversaciones')
+    .select('telefono')
+    .eq('id', conversacionId)
+    .single();
+
+  if (!convData?.telefono) {
+    console.error('[API] No se encontró el teléfono');
+    return false;
+  }
+
+  // 2. Llamar a la Edge Function para enviar por WhatsApp
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const functionUrl = `${supabaseUrl}/functions/v1/whatsapp-chat-send`;
+
+  try {
+    const response = await fetch(functionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        conversacion_id: conversacionId,
+        texto: contenido,
+      }),
     });
-  
-  return !error;
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error('[API] Error enviando por WhatsApp:', result.error);
+      return false;
+    }
+
+    console.log('[API] Mensaje enviado por WhatsApp');
+    return true;
+  } catch (error) {
+    console.error('[API] Error llamando a la función:', error);
+    return false;
+  }
 }
 
 export async function marcarComoLeida(conversacionId: string): Promise<void> {
